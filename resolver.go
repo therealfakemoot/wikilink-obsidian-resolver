@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"errors"
+	// "errors"
 	"log"
 
 	"go.abhg.dev/goldmark/wikilink"
