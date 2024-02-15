@@ -2,6 +2,7 @@ package resolver
 
 import (
 	// "errors"
+	"io/fs"
 	"log/slog"
 
 	"go.abhg.dev/goldmark/wikilink"
@@ -9,7 +10,15 @@ import (
 
 var ()
 
+func NewResolver(vaultRoot, blogRoot string) *Resolver {
+	var r Resolver
+
+	return &r
+}
+
 type Resolver struct {
+	vaultFS fs.FS
+	blogFS  fs.FS
 }
 
 func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
