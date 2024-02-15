@@ -40,8 +40,8 @@
 
 
 # Parameters
-PKG = code.ndumas.com/ndumas/wikilink-parser
-NAME = parse-wikilinks
+PKG = github.com/therealfakemoot/wikilink-obsidian-resolver
+NAME = wikilink-obsidian-resolver
 DOC = README.md LICENSE
 
 
@@ -98,7 +98,7 @@ INSTALL_TARGETS := $(addprefix install-,$(CMDS))
 all: debug setup dep format lint test bench build dist
 
 git-push:
-	git push origin main --tags
+	git push --tags
 
 release-major: bump-major git-push
 
