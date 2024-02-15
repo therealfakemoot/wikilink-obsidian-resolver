@@ -1,10 +1,13 @@
 package resolver
 
 import (
+	"errors"
 	"log"
 
 	"go.abhg.dev/goldmark/wikilink"
 )
+
+var ()
 
 type Resolver struct {
 }
