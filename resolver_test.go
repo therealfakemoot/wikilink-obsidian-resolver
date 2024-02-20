@@ -26,6 +26,7 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 	}
 
 	r, err := resolver.NewResolver("testdata/test_vault/")
+	// t.Logf("all files in vaultFS: %v\n", r.DebugFS())
 	if err != nil {
 		assert.Error(t, err, "could not load test vault")
 	}
