@@ -14,18 +14,24 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 	cases := []struct {
 		name     string
 		in       *wikilink.Node
-		expected []byte
+		expected string
 	}{
 		{
-			name: "no alias, no fragment",
+			name: "basic resolution",
 			in: &wikilink.Node{
-				Target: []byte("target1"),
+				Target: []byte("zk_topic_a"),
 			},
+			expected: "/Resources/blog/published/zk_topic_a",
 		},
 	}
 
-	r := resolver.Resolver{}
+	r, err := resolver.NewResolver("testdata/test_vault/")
+	if err != nil {
+		assert.Error(t, err, "could not load test vault")
+	}
+
 	for _, c := range cases {
+		t.Parallel()
 		t.Run(c.name, func(t *testing.T) {
 			actual, err := r.ResolveWikilink(c.in)
 			if err != nil {
@@ -33,7 +39,7 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 				// t.Logf("error resolving wikilink: %s\n", err)
 				// t.Fail()
 			}
-			assert.Equal(t, actual, c.expected)
+			assert.Equal(t, c.expected, string(actual))
 		})
 	}
 }
