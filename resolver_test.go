@@ -22,11 +22,11 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 			in: &wikilink.Node{
 				Target: []byte("zk_topic_a"),
 			},
-			expected: "/Resources/blog/published/zk_topic_a",
+			expected: "Resources/zk/zk_topic_a.html",
 		},
 	}
 
-	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
+	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelInfo})
 	// t.Logf("all files in vaultFS: %v\n", r.DebugFS())
 	if err != nil {
 		assert.Error(t, err, "could not load test vault")

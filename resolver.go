@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"go.abhg.dev/goldmark/wikilink"
 )
@@ -45,16 +46,24 @@ type Resolver struct {
 	Log     *slog.Logger
 }
 
-func (r *Resolver) Glob(pattern string) ([]string, error) {
-	matches := make([]string, 0)
-	walkFunc := func(path string, d fs.DirEntry, err error) error {
-		if !d.IsDir() {
-			files, err := fs.Glob(r.vaultFS, pattern)
-			if err != nil {
-				return fmt.Errorf("error searching for files in dir %q: %w", d.Name(), err)
-			}
+func (r *Resolver) Glob(target string) ([]string, error) {
+	pattern := fmt.Sprintf("*%s*", target)
 
-			matches = append(matches, files...)
+	l := r.Log.With(slog.String("pattern", pattern))
+	l.Debug("searching for target")
+
+	matches := make([]string, 0)
+
+	walkFunc := func(path string, d fs.DirEntry, err error) error {
+		l := l.With(slog.String("path", path), slog.String("dir", d.Name()))
+		l.Debug("walkFunc stepping")
+
+		if err != nil {
+			return fmt.Errorf("walkFunc was handed an error: %w", err)
+		}
+
+		if strings.Contains(path, target) {
+			matches = append(matches, path)
 		}
 
 		return nil
@@ -69,15 +78,21 @@ func (r *Resolver) Glob(pattern string) ([]string, error) {
 }
 
 func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
-	wildcardGlob := fmt.Sprintf("*%s*", string(n.Target))
+	target := string(n.Target)
 
-	matches, err := r.Glob(wildcardGlob)
+	matches, err := r.Glob(target)
 	if err != nil {
-		return nil, fmt.Errorf("could not glob for %q: %w", wildcardGlob, err)
+		return nil, fmt.Errorf("could not glob for %q: %w", target, err)
 	}
 
 	if len(matches) > 0 {
-		return []byte(matches[0]), nil
+		head, tail := filepath.Split(matches[0])
+		ext := filepath.Ext(tail)
+		if ext == ".md" {
+			tail = tail[:len(tail)-len(ext)] + ".html"
+		}
+
+		return []byte(filepath.Join(head, tail)), nil
 	}
 
 	return nil, ErrNameNotResolved
