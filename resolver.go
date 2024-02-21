@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -15,13 +15,19 @@ var (
 	ErrNameNotResolved = errors.New("name could not be resolved")
 )
 
-func NewResolver(vaultRoot string) (*Resolver, error) {
+func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 	var r Resolver
+
+	l := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: opts.LogLevel,
+	}))
+	r.Log = l
 
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get current working directory before opening vault dir: %w", err)
 	}
+
 	absPath := filepath.Join(wd, vaultRoot)
 	vaultFS := os.DirFS(absPath)
 
@@ -30,37 +36,54 @@ func NewResolver(vaultRoot string) (*Resolver, error) {
 	return &r, nil
 }
 
-type Resolver struct {
-	vaultFS fs.FS
+type Opts struct {
+	LogLevel slog.Level
 }
 
-func (r *Resolver) Glob(pattern string) []string {
-	files, err := fs.Glob(r.vaultFS, pattern)
-	if err != nil {
-		panic(err)
+type Resolver struct {
+	vaultFS fs.FS
+	Log     *slog.Logger
+}
+
+func (r *Resolver) Glob(pattern string) ([]string, error) {
+	matches := make([]string, 0)
+	walkFunc := func(path string, d fs.DirEntry, err error) error {
+		if !d.IsDir() {
+			files, err := fs.Glob(r.vaultFS, pattern)
+			if err != nil {
+				return fmt.Errorf("error searching for files in dir %q: %w", d.Name(), err)
+			}
+
+			matches = append(matches, files...)
+		}
+
+		return nil
 	}
-	return files
+
+	err := fs.WalkDir(r.vaultFS, ".", walkFunc)
+	if err != nil {
+		return matches, fmt.Errorf("error globbing for %q: %w", pattern, err)
+	}
+
+	return matches, nil
 }
 
 func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
-	out := make([]byte, 0)
+	wildcardGlob := fmt.Sprintf("*%s*", string(n.Target))
 
-	wildcard_glob := fmt.Sprintf("*%s*", n.Target)
-	log.Printf("matching glob: %q\n", wildcard_glob)
-	literal_glob, err := fs.Glob(r.vaultFS, wildcard_glob)
+	matches, err := r.Glob(wildcardGlob)
 	if err != nil {
-		return nil, fmt.Errorf("could not use glob to search: %w", err)
+		return nil, fmt.Errorf("could not glob for %q: %w", wildcardGlob, err)
 	}
 
-	if len(literal_glob) > 0 {
-		log.Println("match found")
-		return []byte(literal_glob[0]), nil
+	if len(matches) > 0 {
+		return []byte(matches[0]), nil
 	}
 
-	return out, ErrNameNotResolved
+	return nil, ErrNameNotResolved
 }
 
-func (r *Resolver) DebugFS() []string {
+func (r *Resolver) DebugFS() ([]string, error) {
 	files := make([]string, 0)
 
 	walkFunc := func(path string, d fs.DirEntry, err error) error {
@@ -71,7 +94,10 @@ func (r *Resolver) DebugFS() []string {
 		return nil
 	}
 
-	fs.WalkDir(r.vaultFS, ".", walkFunc)
+	err := fs.WalkDir(r.vaultFS, ".", walkFunc)
+	if err != nil {
+		return files, fmt.Errorf("error walking FS: %w", err)
+	}
 
-	return files
+	return files, nil
 }

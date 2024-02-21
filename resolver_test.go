@@ -1,6 +1,7 @@
 package resolver_test
 
 import (
+	"log/slog"
 	"testing"
 
 	"github.com/therealfakemoot/wikilink-obsidian-resolver"
@@ -25,7 +26,7 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 		},
 	}
 
-	r, err := resolver.NewResolver("testdata/test_vault/")
+	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
 	// t.Logf("all files in vaultFS: %v\n", r.DebugFS())
 	if err != nil {
 		assert.Error(t, err, "could not load test vault")
