@@ -42,11 +42,8 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 		},
 	}
 
-	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
+	r := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
 	// t.Logf("all files in vaultFS: %v\n", r.DebugFS())
-	if err != nil {
-		assert.Error(t, err, "could not load test vault")
-	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
