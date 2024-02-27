@@ -16,7 +16,7 @@ var (
 	ErrNameNotResolved = errors.New("name could not be resolved")
 )
 
-func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
+func NewResolver(vaultRoot string, opts Opts) *Resolver {
 	var r Resolver
 
 	l := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -26,7 +26,7 @@ func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't get current working directory: %w", err)
+		r.Log.Error("could not get working dir", slog.Any("error", err))
 	}
 
 	absPath := filepath.Join(wd, vaultRoot)
@@ -34,7 +34,7 @@ func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 
 	r.vaultFS = vaultFS
 
-	return &r, nil
+	return &r
 }
 
 type Opts struct {
