@@ -26,7 +26,7 @@ func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return nil, fmt.Errorf("couldn't get current working directory before opening vault dir: %w", err)
+		return nil, fmt.Errorf("couldn't get current working directory: %w", err)
 	}
 
 	absPath := filepath.Join(wd, vaultRoot)
@@ -85,9 +85,13 @@ func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
 		return nil, fmt.Errorf("could not glob for %q: %w", target, err)
 	}
 
+	r.Log.Debug("matches", slog.Any("files", matches))
+	r.Log.Debug("matches count", slog.Int("len", len(matches)))
+
 	if len(matches) > 0 {
 		head, tail := filepath.Split(matches[0])
 		ext := filepath.Ext(tail)
+
 		if ext == ".md" {
 			tail = tail[:len(tail)-len(ext)] + ".html"
 		}
@@ -95,24 +99,7 @@ func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
 		return []byte(filepath.Join(head, tail)), nil
 	}
 
+	r.Log.Debug("name not resolved")
+
 	return nil, ErrNameNotResolved
-}
-
-func (r *Resolver) DebugFS() ([]string, error) {
-	files := make([]string, 0)
-
-	walkFunc := func(path string, d fs.DirEntry, err error) error {
-		if !d.IsDir() {
-			files = append(files, path)
-		}
-
-		return nil
-	}
-
-	err := fs.WalkDir(r.vaultFS, ".", walkFunc)
-	if err != nil {
-		return files, fmt.Errorf("error walking FS: %w", err)
-	}
-
-	return files, nil
 }
