@@ -1,7 +1,12 @@
-obs-hugo
+# Hugo artifacts
 *.lock
 resources/
-bazel-*
 public/
+
+# Makefile artifacts
+obs-hugo
 dist/
 reports/
+
+# Bazel artifacts
+bazel-*
