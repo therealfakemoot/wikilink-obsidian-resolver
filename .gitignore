@@ -1,6 +1,7 @@
 obs-hugo
 *.lock
 resources/
+bazel-*
 public/
 dist/
 reports/
