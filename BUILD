@@ -3,3 +3,22 @@ load("@gazelle//:def.bzl", "gazelle")
 
 # gazelle:prefix github.com/therealfakemoot/wikilink-obsidian-resolver
 gazelle(name = "gazelle")
+
+go_library(
+    name = "wikilink-obsidian-resolver",
+    srcs = ["resolver.go"],
+    importpath = "github.com/therealfakemoot/wikilink-obsidian-resolver",
+    visibility = ["//visibility:public"],
+    deps = ["@dev_abhg_go_goldmark_wikilink//:wikilink"],
+)
+
+go_test(
+    name = "wikilink-obsidian-resolver_test",
+    srcs = ["resolver_test.go"],
+    data = glob(["testdata/**"]),
+    deps = [
+        ":wikilink-obsidian-resolver",
+        "@com_github_stretchr_testify//assert",
+        "@dev_abhg_go_goldmark_wikilink//:wikilink",
+    ],
+)

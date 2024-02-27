@@ -1,9 +1,5 @@
-code.ndumas.com/ndumas/hugo-terminal-post-series v0.0.0-20230605163527-ba95917e2174 h1:McUYj3iu/BZj7Xf596Nu9KNCFIuv6ch0SIM72Un9i/M=
-code.ndumas.com/ndumas/hugo-terminal-post-series v0.0.0-20230605163527-ba95917e2174/go.mod h1:uecU3tZR9HVeY//8DR9Qtk1ZXvup/JyYdPCmmTY7LTY=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/panr/hugo-theme-terminal/v3 v3.1.2 h1:DZXzAabj8zG/9k6kSE9uQLtJUoPGA5KiSeiBbni3oHM=
-github.com/panr/hugo-theme-terminal/v3 v3.1.2/go.mod h1:Cs+1ub6qhz/G43ohdRSR1U2qNqGLO9h0qgTG4Jq9Wo4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
