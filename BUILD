@@ -6,14 +6,17 @@ gazelle(name = "gazelle")
 
 go_library(
     name = "wikilink-obsidian-resolver",
-    srcs = ["resolver.go"],
+    srcs = [
+        "resolver.go",
+        "version.go",
+    ],
     importpath = "github.com/therealfakemoot/wikilink-obsidian-resolver",
     visibility = ["//visibility:public"],
-    deps = ["@dev_abhg_go_goldmark_wikilink//:wikilink"],
     x_defs = {
-        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Version": "${STABLE_STAMP_VERSION},
-        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Build": "${STABLE_STAMP_BUILD},
+        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Version": "${STABLE_STAMP_VERSION}",
+        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Build": "${STABLE_STAMP_BUILD}",
     },
+    deps = ["@dev_abhg_go_goldmark_wikilink//:wikilink"],
 )
 
 go_test(

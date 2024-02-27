@@ -1,0 +1,15 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "version_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/therealfakemoot/wikilink-obsidian-resolver/cmd/version",
+    visibility = ["//visibility:private"],
+    deps = ["//:wikilink-obsidian-resolver"],
+)
+
+go_binary(
+    name = "version",
+    embed = [":version_lib"],
+    visibility = ["//visibility:public"],
+)
