@@ -13,8 +13,8 @@ go_library(
     importpath = "github.com/therealfakemoot/wikilink-obsidian-resolver",
     visibility = ["//visibility:public"],
     x_defs = {
-        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Version": "${STABLE_STAMP_VERSION}",
-        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Build": "${STABLE_STAMP_BUILD}",
+        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Version": "{STABLE_STAMP_VERSION}",
+        "github.com/therealfakemoot/wikilink-obsidian-resolver/resolver.Build": "{STABLE_STAMP_BUILD}",
     },
     deps = ["@dev_abhg_go_goldmark_wikilink//:wikilink"],
 )
