@@ -1,5 +1,6 @@
 package resolver
 
 var (
-	Version, Build string
+	Version string
+	Build   string
 )
