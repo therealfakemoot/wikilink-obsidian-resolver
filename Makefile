@@ -113,7 +113,7 @@ setup-stringer:
 	go install golang.org/x/tools/cmd/stringer@latest
 
 setup-bump:
-	go install github.com/guilhem/bump@latest
+	go install github.com/therealfakemoot/bump@latest
 
 bump-major: setup-bump
 	bump major
