@@ -25,3 +25,6 @@ query --output=label_kind
 # By default, failing tests don't print any output, it's logged to a
 # file instead.
 test --test_output=errors
+
+# local cache
+--remote_cache=http://localhost:8080/
