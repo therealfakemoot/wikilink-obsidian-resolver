@@ -53,7 +53,7 @@ func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
 
 	for name, note := range r.Vault.Notes {
 		if strings.Contains(name, target) {
-			notePath := fmt.Sprintf("/%d/%d/%s", note.Date.Year(), note.Date.Month(), name)
+			notePath := fmt.Sprintf("/%d/%02d/%s", note.Date.Year(), note.Date.Month(), name)
 
 			return []byte(notePath), nil
 		}
