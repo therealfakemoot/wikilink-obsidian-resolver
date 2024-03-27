@@ -53,6 +53,7 @@ func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
 
 	for name, note := range r.Vault.Notes {
 		if strings.Contains(name, target) {
+			// FIXME: Critical: pull the URL format string from Hugo's config
 			notePath := fmt.Sprintf("/%d/%02d/%s", note.Date.Year(), note.Date.Month(), name)
 
 			return []byte(notePath), nil

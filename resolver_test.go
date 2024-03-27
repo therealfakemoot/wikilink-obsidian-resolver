@@ -13,7 +13,6 @@ import (
 )
 
 func Test_BasicWikilinkResolution(t *testing.T) {
-	t.Parallel()
 	cases := []struct {
 		name     string
 		in       *wikilink.Node
