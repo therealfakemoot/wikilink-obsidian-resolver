@@ -1,29 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"io/fs"
-	"os"
-	"path/filepath"
+	"log"
+
+	"github.com/therealfakemoot/wikilink-obsidian-resolver"
 )
 
 var vaultRoot = "testdata/test_vault/"
 
 func main() {
-
-	wd, err := os.Getwd()
+	r, err := resolver.NewResolver(vaultRoot, resolver.Opts{})
 	if err != nil {
-		fmt.Printf("couldn't get current working directory before opening vault dir: %s\n", err)
-		return
+		log.Fatalf("couldn't build resolver: %s\n", err)
 	}
 
-	absPath := filepath.Join(wd, vaultRoot)
-	vaultFS := os.DirFS(absPath)
-
-	files, err := fs.Glob(vaultFS, "*")
-	if err != nil {
-		fmt.Printf("couldn't run glob: %s\n", err)
-		return
+	for _, note := range r.Vault.Notes {
+		log.Printf("%#+v\n", note)
 	}
-	fmt.Println(files)
 }

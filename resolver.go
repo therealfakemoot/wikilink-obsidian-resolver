@@ -3,38 +3,37 @@ package resolver
 import (
 	"errors"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
-	"strings"
 
+	"github.com/therealfakemoot/go-obsidian"
 	"go.abhg.dev/goldmark/wikilink"
 )
 
-var (
-	ErrNameNotResolved = errors.New("name could not be resolved")
-)
+var ErrNameNotResolved = errors.New("name could not be resolved")
 
-func NewResolver(vaultRoot string, opts Opts) *Resolver {
+func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 	var r Resolver
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return &r, fmt.Errorf("couldn't get current working directory before opening vault dir: %s", err)
+	}
+	absPath := filepath.Join(wd, vaultRoot)
+	v, err := obsidian.NewVault(absPath)
+	if err != nil {
+		return &r, fmt.Errorf("could not create resolver: %w", err)
+	}
+
+	r.Vault = v
 
 	l := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: opts.LogLevel,
 	}))
 	r.Log = l
 
-	wd, err := os.Getwd()
-	if err != nil {
-		r.Log.Error("could not get working dir", slog.Any("error", err))
-	}
-
-	absPath := filepath.Join(wd, vaultRoot)
-	vaultFS := os.DirFS(absPath)
-
-	r.vaultFS = vaultFS
-
-	return &r
+	return &r, nil
 }
 
 type Opts struct {
@@ -42,39 +41,12 @@ type Opts struct {
 }
 
 type Resolver struct {
-	vaultFS fs.FS
-	Log     *slog.Logger
+	Vault *obsidian.Vault
+	Log   *slog.Logger
 }
 
 func (r *Resolver) Glob(target string) ([]string, error) {
-	pattern := fmt.Sprintf("*%s*", target)
-
-	l := r.Log.With(slog.String("pattern", pattern))
-	l.Debug("searching for target")
-
-	matches := make([]string, 0)
-
-	walkFunc := func(path string, d fs.DirEntry, err error) error {
-		l := l.With(slog.String("path", path), slog.String("dir", d.Name()))
-		l.Debug("walkFunc stepping")
-
-		if err != nil {
-			return fmt.Errorf("walkFunc was handed an error: %w", err)
-		}
-
-		if strings.Contains(path, target) {
-			matches = append(matches, path)
-		}
-
-		return nil
-	}
-
-	err := fs.WalkDir(r.vaultFS, ".", walkFunc)
-	if err != nil {
-		return matches, fmt.Errorf("error globbing for %q: %w", pattern, err)
-	}
-
-	return matches, nil
+	return nil, fmt.Errorf("Fart")
 }
 
 func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
