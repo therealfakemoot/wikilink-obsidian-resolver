@@ -24,26 +24,22 @@ func Test_BasicWikilinkResolution(t *testing.T) {
 			in: &wikilink.Node{
 				Target: []byte("zk_topic_a"),
 			},
-			expected: "Resources/zk/zk_topic_a.html",
+			expected: "2024/02/zk_topic_a",
 		},
 		{
 			name: "basic resolution b",
 			in: &wikilink.Node{
 				Target: []byte("zk_topic_b"),
 			},
-			expected: "Resources/zk/zk_topic_b.html",
-		},
-		{
-			name: "basic resolution c",
-			in: &wikilink.Node{
-				Target: []byte("zk_topic_c"),
-			},
-			expected: "Resources/zk/zk_topic_c.html",
+			expected: "2024/01/zk_topic_a",
 		},
 	}
 
-	r := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
-	// t.Logf("all files in vaultFS: %v\n", r.DebugFS())
+	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
+	if err != nil {
+		t.Logf("couldn't create resolver: %s\n", err)
+		t.Fail()
+	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

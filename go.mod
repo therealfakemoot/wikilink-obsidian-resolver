@@ -4,7 +4,7 @@ go 1.21.6
 
 require (
 	github.com/stretchr/testify v1.8.2
-	github.com/therealfakemoot/go-obsidian v0.0.1
+	github.com/therealfakemoot/go-obsidian v0.0.2
 	go.abhg.dev/goldmark/wikilink v0.5.0
 )
 

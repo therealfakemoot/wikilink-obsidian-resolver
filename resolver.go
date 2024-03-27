@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/therealfakemoot/go-obsidian"
 	"go.abhg.dev/goldmark/wikilink"
@@ -18,9 +19,11 @@ func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return &r, fmt.Errorf("couldn't get current working directory before opening vault dir: %s", err)
+		return &r, fmt.Errorf("couldn't get current working directory before opening vault dir: %w", err)
 	}
+
 	absPath := filepath.Join(wd, vaultRoot)
+
 	v, err := obsidian.NewVault(absPath)
 	if err != nil {
 		return &r, fmt.Errorf("could not create resolver: %w", err)
@@ -45,30 +48,15 @@ type Resolver struct {
 	Log   *slog.Logger
 }
 
-func (r *Resolver) Glob(target string) ([]string, error) {
-	return nil, fmt.Errorf("Fart")
-}
-
 func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
 	target := string(n.Target)
 
-	matches, err := r.Glob(target)
-	if err != nil {
-		return nil, fmt.Errorf("could not glob for %q: %w", target, err)
-	}
+	for name, note := range r.Vault.Notes {
+		if strings.Contains(name, target) {
+			notePath := fmt.Sprintf("/%d/%d/%s", note.Date.Year(), note.Date.Month(), name)
 
-	r.Log.Debug("matches", slog.Any("files", matches))
-	r.Log.Debug("matches count", slog.Int("len", len(matches)))
-
-	if len(matches) > 0 {
-		head, tail := filepath.Split(matches[0])
-		ext := filepath.Ext(tail)
-
-		if ext == ".md" {
-			tail = tail[:len(tail)-len(ext)] + ".html"
+			return []byte(notePath), nil
 		}
-
-		return []byte(filepath.Join(head, tail)), nil
 	}
 
 	r.Log.Debug("name not resolved")
