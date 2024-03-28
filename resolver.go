@@ -3,13 +3,12 @@ package resolver
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/therealfakemoot/go-obsidian"
 	"go.abhg.dev/goldmark/wikilink"
+	"go.uber.org/zap"
 )
 
 var ErrNameNotResolved = errors.New("name could not be resolved")
@@ -31,36 +30,32 @@ func NewResolver(vaultRoot string, opts Opts) (*Resolver, error) {
 
 	r.Vault = v
 
-	l := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: opts.LogLevel,
-	}))
-	r.Log = l
+	r.Log = v.Logger
 
 	return &r, nil
 }
 
 type Opts struct {
-	LogLevel slog.Level
+	LogLevel zap.AtomicLevel
 }
 
 type Resolver struct {
 	Vault *obsidian.Vault
-	Log   *slog.Logger
+	Log   *zap.Logger
 }
 
 func (r *Resolver) ResolveWikilink(n *wikilink.Node) ([]byte, error) {
 	target := string(n.Target)
 
 	for name, note := range r.Vault.Notes {
-		if strings.Contains(name, target) {
-			// FIXME: Critical: pull the URL format string from Hugo's config
+		if name == target {
 			notePath := fmt.Sprintf("/%d/%02d/%s", note.Date.Year(), note.Date.Month(), name)
 
 			return []byte(notePath), nil
 		}
 	}
 
-	r.Log.Debug("name not resolved")
+	r.Log.Info("name not resolved")
 
 	return nil, ErrNameNotResolved
 }

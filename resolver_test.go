@@ -2,7 +2,6 @@ package resolver_test
 
 import (
 	"errors"
-	"log/slog"
 	"testing"
 
 	"github.com/therealfakemoot/wikilink-obsidian-resolver"
@@ -12,29 +11,45 @@ import (
 	"go.abhg.dev/goldmark/wikilink"
 )
 
-func Test_BasicWikilinkResolution(t *testing.T) {
+func Test_GoodWikilinkResolution(t *testing.T) {
 	cases := []struct {
 		name     string
 		in       *wikilink.Node
 		expected string
 	}{
 		{
-			name: "basic resolution",
+			name: "target resolution",
 			in: &wikilink.Node{
 				Target: []byte("zk_topic_a"),
 			},
 			expected: "/2024/02/zk_topic_a",
 		},
 		{
-			name: "basic resolution b",
+			name: "target resolution b",
 			in: &wikilink.Node{
 				Target: []byte("zk_topic_b"),
 			},
 			expected: "/2024/01/zk_topic_b",
 		},
+		{
+			name: "fragment resolution b",
+			in: &wikilink.Node{
+				Target:   []byte("zk_topic_b"),
+				Fragment: []byte("zk topic about croagers"),
+			},
+			expected: "/2024/01/zk_topic_b",
+		},
+		{
+			name: "fragment resolution a",
+			in: &wikilink.Node{
+				Target:   []byte("zk_topic_a"),
+				Fragment: []byte("zk topic about glorbles"),
+			},
+			expected: "/2024/02/zk_topic_a",
+		},
 	}
 
-	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{LogLevel: slog.LevelDebug})
+	r, err := resolver.NewResolver("testdata/test_vault/", resolver.Opts{})
 	if err != nil {
 		t.Logf("couldn't create resolver: %s\n", err)
 		t.Fail()
