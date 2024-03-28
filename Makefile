@@ -98,6 +98,7 @@ INSTALL_TARGETS := $(addprefix install-,$(CMDS))
 all: debug setup dep format lint test bench build dist
 
 git-push:
+	git push
 	git push --tags
 
 release-major: bump-major git-push
