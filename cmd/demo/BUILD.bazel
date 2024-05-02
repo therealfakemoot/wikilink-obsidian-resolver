@@ -5,7 +5,7 @@ go_library(
     srcs = ["main.go"],
     importpath = "github.com/therealfakemoot/wikilink-obsidian-resolver/cmd/demo",
     visibility = ["//visibility:private"],
-    deps = ["@com_github_therealfakemoot_go_obsidian//:go-obsidian"],
+    deps = ["//:wikilink-obsidian-resolver"],
 )
 
 go_binary(

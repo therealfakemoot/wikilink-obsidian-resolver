@@ -16,7 +16,11 @@ go_library(
         "Version": "{STABLE_STAMP_VERSION}",
         "Build": "{STABLE_STAMP_COMMIT}",
     },
-    deps = ["@dev_abhg_go_goldmark_wikilink//:wikilink"],
+    deps = [
+        "@com_github_therealfakemoot_go_obsidian//:go-obsidian",
+        "@dev_abhg_go_goldmark_wikilink//:wikilink",
+        "@org_uber_go_zap//:zap",
+    ],
 )
 
 go_test(
